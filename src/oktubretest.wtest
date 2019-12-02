@@ -1,0 +1,85 @@
+import personas.*
+import marcas.*
+import carpasyjarras.*
+
+describe "Testeando el Oktubre"{
+	//defino constantes y variables
+	
+	const juan = new Persona(peso = 90, nivelDeAguante = 100, musicaTradicional = true, jarrasCompradas = [], nacionalidad = belga)
+	const pedro = new Persona(peso = 120, nivelDeAguante = 250, musicaTradicional = false, jarrasCompradas = [], nacionalidad = aleman)
+	const maria = new Persona(peso = 60, nivelDeAguante = 200, musicaTradicional = true, jarrasCompradas = [], nacionalidad = checo)
+	const guiness = new Negra(contenidoLupulo = 8,paisOrigen = belga,graduacionReglamentaria=10)
+	const carpa1 = new Carpas(limite = 10,tieneBanda=true,marcaQueVende=guiness,personasIngresadas=[])
+	const jarra1 = new Jarras(capacidad = 2,marca=guiness)
+	const jarra2 = new Jarras(capacidad = 2,marca=guiness)
+	
+	fixture {
+		juan.comprarJarra(jarra1)
+	
+		carpa1.ingresoEfectivo(maria)
+	}
+
+	
+	test "contenido alcohol de una jarra"{
+		assert.equals(20,jarra1.contenidoAlcohol())
+	}
+	
+	test "total alcohol"{
+		assert.equals(2,juan.cantidadAlcoholIngerido())
+	}
+	
+	test "juan esta ebrio"{
+		assert.that(juan.estaEbrio())
+	}
+	
+	test "juan quiere entrar en carpa1"{
+		assert.that(juan.quiereEntrarEnLaCarpa(carpa1))
+	}
+		
+	test "pedro quiere entrar en carpa1"{
+		assert.notThat(pedro.quiereEntrarEnLaCarpa(carpa1))
+	}
+	
+	test "carpa1 deja entrar a juan"{
+		assert.notThat(carpa1.dejaIngresar(juan))
+	}
+	
+	test "carpa1 deja entrar a pedro"{
+		
+		assert.that(carpa1.siEntraSuperaElLimite())
+		assert.notThat(pedro.estaEbrio())
+		assert.that(carpa1.dejaIngresar(pedro))
+	}
+	
+	test "juan puede entrar en carpa1"{
+		assert.notThat(carpa1.puedeEntrar(juan))
+	}
+	
+	test "pedro puede entrar en carpa1"{
+		assert.notThat(carpa1.puedeEntrar(pedro))
+	}
+	
+	test "hacer efectivo el ingreso"{
+		assert.throwsExceptionWithMessage("La persona no puede ingresar a la carpa", {carpa1.ingresoEfectivo(juan)})
+	}
+	
+	test "hacer efectivo el ingreso de maria"{
+		assert.equals(1,carpa1.cuantaGenteHay())
+	}
+	
+	test "saber cuantos ebrios empedernidos hay"{
+		maria.comprarJarra(jarra2)
+		assert.equals(2,maria.cantidadAlcoholIngerido())
+		assert.that(maria.esEbrioEmpedernido())
+		assert.equals(1,carpa1.ebriosEmpedernidos())
+	}
+	
+	test "saber si es un patriota"{
+		assert.equals(guiness,jarra1.queMarca())
+		assert.that(juan.esPatriota())
+	}
+
+
+}
+
+
